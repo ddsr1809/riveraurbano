@@ -34,13 +34,7 @@ echo returnDB();
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
 
-  <!-- =======================================================
-  * Template Name: RiveraUrbano
-  * Template URL: https://bootstrapmade.com/real-estate-agency-bootstrap-template/
-  * Updated: Aug 09 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+
 </head>
 
 <body class="index-page">
@@ -48,7 +42,7 @@ echo returnDB();
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="index.php" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
         <h1 class="sitename">Rivera<span>Urbano</span></h1>
@@ -56,27 +50,10 @@ echo returnDB();
 
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="index.php" class="active">Home</a></li>
           <li><a href="about.html">Terrenos</a></li>
           <li><a href="services.html">Ubicación</a></li>
           <li><a href="properties.html">Nosotros</a></li>
-<!--          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--            <ul>-->
-<!--              <li><a href="#">Dropdown 1</a></li>-->
-<!--              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
-<!--                <ul>-->
-<!--                  <li><a href="#">Deep Dropdown 1</a></li>-->
-<!--                  <li><a href="#">Deep Dropdown 2</a></li>-->
-<!--                  <li><a href="#">Deep Dropdown 3</a></li>-->
-<!--                  <li><a href="#">Deep Dropdown 4</a></li>-->
-<!--                  <li><a href="#">Deep Dropdown 5</a></li>-->
-<!--                </ul>-->
-<!--              </li>-->
-<!--              <li><a href="#">Dropdown 2</a></li>-->
-<!--              <li><a href="#">Dropdown 3</a></li>-->
-<!--              <li><a href="#">Dropdown 4</a></li>-->
-<!--            </ul>-->
-<!--          </li>-->
           <li><a href="contact.html">Contacto</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -232,200 +209,6 @@ echo returnDB();
       </div>
 
     </section><!-- /Services Section -->
-
-<!--    <!-- Agents Section -->-->
-<!--    <section id="agents" class="agents section">-->
-<!---->
-<!--      <!-- Section Title -->-->
-<!--      <div class="container section-title" data-aos="fade-up">-->
-<!--        <h2>Our Agents</h2>-->
-<!--        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>-->
-<!--      </div><!-- End Section Title -->-->
-<!---->
-<!--      <div class="container">-->
-<!---->
-<!--        <div class="row gy-5">-->
-<!---->
-<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">-->
-<!--            <div class="member">-->
-<!--              <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></div>-->
-<!--              <div class="member-info">-->
-<!--                <h4>Walter White</h4>-->
-<!--                <span>Chief Executive Officer</span>-->
-<!--                <div class="social">-->
-<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
-<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
-<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
-<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div><!-- End Team Member -->-->
-<!---->
-<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">-->
-<!--            <div class="member">-->
-<!--              <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></div>-->
-<!--              <div class="member-info">-->
-<!--                <h4>Sarah Jhonson</h4>-->
-<!--                <span>Rent Manager</span>-->
-<!--                <div class="social">-->
-<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
-<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
-<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
-<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div><!-- End Team Member -->-->
-<!---->
-<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">-->
-<!--            <div class="member">-->
-<!--              <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid" alt=""></div>-->
-<!--              <div class="member-info">-->
-<!--                <h4>William Anderson</h4>-->
-<!--                <span>Sale manager<br></span>-->
-<!--                <div class="social">-->
-<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
-<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
-<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
-<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div><!-- End Team Member -->-->
-<!---->
-<!--        </div>-->
-<!---->
-<!--      </div>-->
-<!---->
-<!--    </section><!-- /Agents Section -->-->
-
-<!--    <!-- Testimonials Section -->-->
-<!--    <section id="testimonials" class="testimonials section">-->
-<!---->
-<!--      <!-- Section Title -->-->
-<!--      <div class="container section-title" data-aos="fade-up">-->
-<!--        <h2>Testimonials</h2>-->
-<!--        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>-->
-<!--      </div><!-- End Section Title -->-->
-<!---->
-<!--      <div class="container" data-aos="fade-up" data-aos-delay="100">-->
-<!---->
-<!--        <div class="swiper init-swiper">-->
-<!--          <script type="application/json" class="swiper-config">-->
-<!--            {-->
-<!--              "loop": true,-->
-<!--              "speed": 600,-->
-<!--              "autoplay": {-->
-<!--                "delay": 5000-->
-<!--              },-->
-<!--              "slidesPerView": "auto",-->
-<!--              "pagination": {-->
-<!--                "el": ".swiper-pagination",-->
-<!--                "type": "bullets",-->
-<!--                "clickable": true-->
-<!--              },-->
-<!--              "breakpoints": {-->
-<!--                "320": {-->
-<!--                  "slidesPerView": 1,-->
-<!--                  "spaceBetween": 40-->
-<!--                },-->
-<!--                "1200": {-->
-<!--                  "slidesPerView": 3,-->
-<!--                  "spaceBetween": 1-->
-<!--                }-->
-<!--              }-->
-<!--            }-->
-<!--          </script>-->
-<!--          <div class="swiper-wrapper">-->
-<!---->
-<!--            <div class="swiper-slide">-->
-<!--              <div class="testimonial-item">-->
-<!--                <div class="stars">-->
-<!--                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>-->
-<!--                </div>-->
-<!--                <p>-->
-<!--                  Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.-->
-<!--                </p>-->
-<!--                <div class="profile mt-auto">-->
-<!--                  <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">-->
-<!--                  <h3>Saul Goodman</h3>-->
-<!--                  <h4>Ceo &amp; Founder</h4>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div><!-- End testimonial item -->-->
-<!---->
-<!--            <div class="swiper-slide">-->
-<!--              <div class="testimonial-item">-->
-<!--                <div class="stars">-->
-<!--                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>-->
-<!--                </div>-->
-<!--                <p>-->
-<!--                  Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.-->
-<!--                </p>-->
-<!--                <div class="profile mt-auto">-->
-<!--                  <img src="assets/img/testimonials/testimonials-2.jpg" class="testimonial-img" alt="">-->
-<!--                  <h3>Sara Wilsson</h3>-->
-<!--                  <h4>Designer</h4>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div><!-- End testimonial item -->-->
-<!---->
-<!--            <div class="swiper-slide">-->
-<!--              <div class="testimonial-item">-->
-<!--                <div class="stars">-->
-<!--                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>-->
-<!--                </div>-->
-<!--                <p>-->
-<!--                  Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.-->
-<!--                </p>-->
-<!--                <div class="profile mt-auto">-->
-<!--                  <img src="assets/img/testimonials/testimonials-3.jpg" class="testimonial-img" alt="">-->
-<!--                  <h3>Jena Karlis</h3>-->
-<!--                  <h4>Store Owner</h4>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div><!-- End testimonial item -->-->
-<!---->
-<!--            <div class="swiper-slide">-->
-<!--              <div class="testimonial-item">-->
-<!--                <div class="stars">-->
-<!--                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>-->
-<!--                </div>-->
-<!--                <p>-->
-<!--                  Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.-->
-<!--                </p>-->
-<!--                <div class="profile mt-auto">-->
-<!--                  <img src="assets/img/testimonials/testimonials-4.jpg" class="testimonial-img" alt="">-->
-<!--                  <h3>Matt Brandon</h3>-->
-<!--                  <h4>Freelancer</h4>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div><!-- End testimonial item -->-->
-<!---->
-<!--            <div class="swiper-slide">-->
-<!--              <div class="testimonial-item">-->
-<!--                <div class="stars">-->
-<!--                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>-->
-<!--                </div>-->
-<!--                <p>-->
-<!--                  Quis quorum aliqua sint quem legam fore sunt eram irure aliqua veniam tempor noster veniam enim culpa labore duis sunt culpa nulla illum cillum fugiat legam esse veniam culpa fore nisi cillum quid.-->
-<!--                </p>-->
-<!--                <div class="profile mt-auto">-->
-<!--                  <img src="assets/img/testimonials/testimonials-5.jpg" class="testimonial-img" alt="">-->
-<!--                  <h3>John Larson</h3>-->
-<!--                  <h4>Entrepreneur</h4>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div><!-- End testimonial item -->-->
-<!---->
-<!--          </div>-->
-<!--          <div class="swiper-pagination"></div>-->
-<!--        </div>-->
-<!---->
-<!--      </div>-->
-<!---->
-<!--    </section><!-- /Testimonials Section -->-->
 
   </main>
 
