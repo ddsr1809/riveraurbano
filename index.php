@@ -1,6 +1,5 @@
  <?php
-echo "la suma es ";
-echo 50+80;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
