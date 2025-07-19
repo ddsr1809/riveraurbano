@@ -1,4 +1,8 @@
  <?php
+//include 'dbase/conn.php';
+include 'dbase/conn2.php';
+
+echo returnDB();
 
 ?>
 <!DOCTYPE html>
@@ -53,28 +57,27 @@
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="properties.html">Properties</a></li>
-          <li><a href="agents.html">Agents</a></li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
-            </ul>
-          </li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="about.html">Terrenos</a></li>
+          <li><a href="services.html">Ubicación</a></li>
+          <li><a href="properties.html">Nosotros</a></li>
+<!--          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--            <ul>-->
+<!--              <li><a href="#">Dropdown 1</a></li>-->
+<!--              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>-->
+<!--                <ul>-->
+<!--                  <li><a href="#">Deep Dropdown 1</a></li>-->
+<!--                  <li><a href="#">Deep Dropdown 2</a></li>-->
+<!--                  <li><a href="#">Deep Dropdown 3</a></li>-->
+<!--                  <li><a href="#">Deep Dropdown 4</a></li>-->
+<!--                  <li><a href="#">Deep Dropdown 5</a></li>-->
+<!--                </ul>-->
+<!--              </li>-->
+<!--              <li><a href="#">Dropdown 2</a></li>-->
+<!--              <li><a href="#">Dropdown 3</a></li>-->
+<!--              <li><a href="#">Dropdown 4</a></li>-->
+<!--            </ul>-->
+<!--          </li>-->
+          <li><a href="contact.html">Contacto</a></li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
@@ -230,72 +233,72 @@
 
     </section><!-- /Services Section -->
 
-    <!-- Agents Section -->
-    <section id="agents" class="agents section">
-
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Our Agents</h2>
-        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row gy-5">
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="member">
-              <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Walter White</h4>
-                <span>Chief Executive Officer</span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>Sarah Jhonson</h4>
-                <span>Rent Manager</span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="member">
-              <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid" alt=""></div>
-              <div class="member-info">
-                <h4>William Anderson</h4>
-                <span>Sale manager<br></span>
-                <div class="social">
-                  <a href=""><i class="bi bi-twitter-x"></i></a>
-                  <a href=""><i class="bi bi-facebook"></i></a>
-                  <a href=""><i class="bi bi-instagram"></i></a>
-                  <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-              </div>
-            </div>
-          </div><!-- End Team Member -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Agents Section -->
+<!--    <!-- Agents Section -->-->
+<!--    <section id="agents" class="agents section">-->
+<!---->
+<!--      <!-- Section Title -->-->
+<!--      <div class="container section-title" data-aos="fade-up">-->
+<!--        <h2>Our Agents</h2>-->
+<!--        <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>-->
+<!--      </div><!-- End Section Title -->-->
+<!---->
+<!--      <div class="container">-->
+<!---->
+<!--        <div class="row gy-5">-->
+<!---->
+<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">-->
+<!--            <div class="member">-->
+<!--              <div class="pic"><img src="assets/img/team/team-1.jpg" class="img-fluid" alt=""></div>-->
+<!--              <div class="member-info">-->
+<!--                <h4>Walter White</h4>-->
+<!--                <span>Chief Executive Officer</span>-->
+<!--                <div class="social">-->
+<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
+<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
+<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
+<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div><!-- End Team Member -->-->
+<!---->
+<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">-->
+<!--            <div class="member">-->
+<!--              <div class="pic"><img src="assets/img/team/team-2.jpg" class="img-fluid" alt=""></div>-->
+<!--              <div class="member-info">-->
+<!--                <h4>Sarah Jhonson</h4>-->
+<!--                <span>Rent Manager</span>-->
+<!--                <div class="social">-->
+<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
+<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
+<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
+<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div><!-- End Team Member -->-->
+<!---->
+<!--          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">-->
+<!--            <div class="member">-->
+<!--              <div class="pic"><img src="assets/img/team/team-3.jpg" class="img-fluid" alt=""></div>-->
+<!--              <div class="member-info">-->
+<!--                <h4>William Anderson</h4>-->
+<!--                <span>Sale manager<br></span>-->
+<!--                <div class="social">-->
+<!--                  <a href=""><i class="bi bi-twitter-x"></i></a>-->
+<!--                  <a href=""><i class="bi bi-facebook"></i></a>-->
+<!--                  <a href=""><i class="bi bi-instagram"></i></a>-->
+<!--                  <a href=""><i class="bi bi-linkedin"></i></a>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div><!-- End Team Member -->-->
+<!---->
+<!--        </div>-->
+<!---->
+<!--      </div>-->
+<!---->
+<!--    </section><!-- /Agents Section -->-->
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="testimonials section">
