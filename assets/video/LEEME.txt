@@ -8,4 +8,4 @@ GitHub no acepta archivos de más de 100 MB. Para comprimir el video con ffmpeg:
   ffmpeg -i original.mp4 -vf "scale=-2:1080" -c:v libx264 -crf 26 -preset slow -c:a aac -b:a 128k -movflags +faststart dron.mp4
   ffmpeg -i original.mp4 -ss 00:00:05 -t 15 -an -vf "scale=-2:720" -c:v libx264 -crf 28 -movflags +faststart dron-corto.mp4
 
-Si prefieres YouTube, sube el video ahí y pon su ID en CONFIG.youtubeId dentro de index.html.
+Si prefieres YouTube, sube el video ahí y pon su ID en la tabla configuracion (clave youtube_id).

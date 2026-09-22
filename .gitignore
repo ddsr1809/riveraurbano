@@ -1,0 +1,15 @@
+# Credenciales: nunca subirlas
+config/config.php
+.env
+
+# Caché de respaldo de textos
+cache/*
+!cache/.htaccess
+
+# Videos pesados (súbelos por FTP/SSH o usa YouTube)
+assets/video/*.mp4
+assets/video/*.webm
+
+# IDE
+.idea/workspace.xml
+.idea/shelf/

@@ -1,0 +1,6 @@
+.git
+.idea
+.env
+config/config.php
+cache/*.json
+assets/video/*.mp4
