@@ -5,6 +5,10 @@ declare(strict_types=1);
 if (PHP_SAPI === 'cli-server') {
     $archivo = __DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     if (is_file($archivo)) return false;
+    if (is_file(rtrim($archivo, '/') . '/index.php') && $archivo !== __DIR__ . '/') {
+        require rtrim($archivo, '/') . '/index.php';
+        return;
+    }
 }
 
 require __DIR__ . '/includes/bootstrap.php';

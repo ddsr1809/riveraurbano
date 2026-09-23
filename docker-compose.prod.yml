@@ -34,8 +34,9 @@ services:
       DB_NAME: rivera
       DB_USER: ${DB_USER:-riverauser}
       DB_PASS: ${DB_PASS}
+      MEDIA_VIDEO_DIR: /var/www/html/assets/video
     volumes:
-      - ${MEDIA_DIR:-../media}/video:/var/www/html/assets/video:ro
+      - ${MEDIA_DIR:-../media}/video:/var/www/html/assets/video   # el panel sube aquí los videos
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost/salud.php"]
       interval: 30s

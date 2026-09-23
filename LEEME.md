@@ -12,6 +12,29 @@ Sitio para rentar los dos terrenos de Calle Novena y Calzada Cetys (Mexicali), e
 
 Si falta un texto en inglés, se muestra el español para que la página nunca quede vacía.
 
+## Panel de administración (`/admin`)
+
+En **https://riveraurbano.com/admin** puedes, sin tocar código ni SQL:
+
+- **Textos:** editar todo lo que dice el sitio, en español e inglés lado a lado, agrupado por sección y con buscador. Marca en amarillo lo que cambiaste y avisa si intentas salir sin guardar.
+- **Contacto y ajustes:** WhatsApp, teléfono, correo, video de YouTube y ubicación del mapa. Acepta el número con espacios o `+` y un enlace completo de YouTube; los limpia solo.
+- **Video:** subir o reemplazar el video del dron y el clip de la portada, con barra de progreso (hasta 600 MB).
+- **Inicio:** pendientes (por ejemplo, si el WhatsApp sigue siendo el de ejemplo) y bitácora de quién cambió qué.
+
+### Crear tu usuario (una vez)
+
+En el servidor, dentro de `/opt/riveraurbano/app`:
+
+```bash
+docker compose -f docker-compose.prod.yml exec web php tools/crear-admin.php damian "Damián"
+```
+
+Muestra una contraseña segura **una sola vez**. Entra con ella y cámbiala en *Mi cuenta*. El mismo comando sirve para recuperar el acceso si olvidas la contraseña.
+
+### Seguridad del panel
+
+Contraseñas con hash (bcrypt), bloqueo de 15 minutos tras 5 intentos fallidos por usuario o 10 por IP, protección CSRF en todos los formularios, sesión que se cierra tras 2 horas sin actividad, cookies solo por HTTPS y el panel oculto para buscadores.
+
 ## Base de datos
 
 - `database/01_esquema.sql`: tablas `idiomas`, `textos`, `configuracion` y la vista `textos_sin_traducir`.
@@ -83,7 +106,7 @@ En el servidor corren tres contenedores: **Caddy** (HTTPS automático con Let's 
 
 ### El video
 
-No va en GitHub. Súbelo directo al servidor:
+Lo más fácil es subirlo desde el panel (`/admin` → Video). También puedes copiarlo directo al servidor:
 
 ```bash
 scp dron.mp4 dron-corto.mp4 deploy@IP_DEL_SERVIDOR:/opt/riveraurbano/media/video/

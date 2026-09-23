@@ -12,3 +12,4 @@ revisar() {
 revisar /salud.php '"ok":true'
 revisar /es/ 'lang="es-MX"'
 revisar /en/ 'lang="en"'
+revisar /admin/ 'Panel de Rivera Urbano'
