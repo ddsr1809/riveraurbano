@@ -48,3 +48,10 @@ FROM (SELECT DISTINCT clave FROM textos) t
 CROSS JOIN idiomas i
 LEFT JOIN textos x ON x.clave = t.clave AND x.idioma = i.codigo
 WHERE i.activo = 1 AND x.clave IS NULL;
+
+-- Control de migraciones (database/migraciones/*.sql): cada archivo se aplica una sola vez
+CREATE TABLE IF NOT EXISTS migraciones (
+  archivo     VARCHAR(150) NOT NULL,
+  aplicada    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (archivo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

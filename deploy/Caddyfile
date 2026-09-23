@@ -1,0 +1,20 @@
+# HTTPS automático (Let's Encrypt) para riveraurbano.com
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMINIO:riveraurbano.com} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+		-X-Powered-By
+	}
+	reverse_proxy web:80
+}
+
+www.{$DOMINIO:riveraurbano.com} {
+	redir https://{$DOMINIO:riveraurbano.com}{uri} permanent
+}

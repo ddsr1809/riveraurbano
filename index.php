@@ -30,7 +30,7 @@ try {
 
 if ($explicito) {
     setcookie('idioma', $lang, ['expires' => time() + 31536000, 'path' => '/', 'samesite' => 'Lax',
-                                'secure' => !empty($_SERVER['HTTPS'])]);
+                                'secure' => !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https']);
 }
 header('Content-Language: ' . $lang);
 header('Vary: Accept-Language, Cookie');
@@ -163,37 +163,92 @@ $js = [
     <div class="terrenos-grid">
       <div>
         <div class="croquis">
-          <svg viewBox="0 0 800 520" role="img" aria-labelledby="croquisTitulo">
-            <title id="croquisTitulo"><?= e('croquis.titulo') ?></title>
-            <rect width="800" height="520" fill="#C7B98F"/>
-            <!-- banquetas -->
-            <rect x="0" y="243" width="800" height="70" fill="#D8D4C8"/>
-            <rect x="613" y="0" width="70" height="520" fill="#D8D4C8"/>
-            <!-- Calle Novena -->
-            <rect x="0" y="250" width="800" height="56" fill="#3A454C"/>
-            <line x1="0" y1="278" x2="606" y2="278" stroke="#F5B400" stroke-width="3" stroke-dasharray="22 16"/>
-            <line x1="690" y1="278" x2="800" y2="278" stroke="#F5B400" stroke-width="3" stroke-dasharray="22 16"/>
-            <!-- Calzada Cetys: cruza la Novena y continúa -->
-            <rect x="620" y="0" width="56" height="520" fill="#3A454C"/>
-            <line x1="648" y1="0" x2="648" y2="240" stroke="#fff" stroke-width="3" stroke-dasharray="22 16"/>
-            <line x1="648" y1="316" x2="648" y2="520" stroke="#fff" stroke-width="3" stroke-dasharray="22 16"/>
-            <!-- Coppel: al norte del Lote A, junto a Cetys -->
-            <rect x="330" y="16" width="274" height="100" fill="#E4E2DC" stroke="#BDB8AD" stroke-width="3"/>
-            <text x="467" y="74" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="700" font-size="22" fill="#6B6860">Coppel</text>
-            <!-- Lote A -->
-            <rect class="lote activo" data-lote="a" tabindex="0" role="button" aria-label="<?= e('croquis.ver_lote', ['lote' => t('lote.a.nombre')]) ?>" x="150" y="128" width="454" height="108" fill="#CDBB90" stroke="#F5B400" stroke-width="4" stroke-dasharray="14 9"/>
-            <text x="377" y="190" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="800" font-size="26" fill="#1F2B33" pointer-events="none"><?= e('lote.a.nombre') ?></text>
-            <!-- Lote B -->
-            <rect class="lote" data-lote="b" tabindex="0" role="button" aria-label="<?= e('croquis.ver_lote', ['lote' => t('lote.b.nombre')]) ?>" x="110" y="322" width="340" height="164" fill="#CDBB90" stroke="#F5B400" stroke-width="4" stroke-dasharray="14 9"/>
-            <text x="280" y="412" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="800" font-size="26" fill="#1F2B33" pointer-events="none"><?= e('lote.b.nombre') ?></text>
-            <!-- 7-Eleven: junto al Lote B, pegado a Cetys -->
-            <rect x="464" y="322" width="140" height="104" fill="#E4E2DC" stroke="#BDB8AD" stroke-width="3"/>
-            <rect x="464" y="322" width="140" height="8" fill="#2E7D4F"/><rect x="464" y="330" width="140" height="4" fill="#E8792B"/>
-            <text x="534" y="384" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="700" font-size="19" fill="#6B6860">7-Eleven</text>
-            <!-- Etiquetas de calles -->
-            <g transform="translate(100,278)"><rect x="-78" y="-16" width="156" height="32" rx="6" fill="#fff"/><text y="7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="700" font-size="18" fill="#1F2B33">Calle Novena</text></g>
-            <g transform="translate(648,130) rotate(-90)"><rect x="-82" y="-16" width="164" height="32" rx="6" fill="#fff"/><text y="7" text-anchor="middle" font-family="Archivo,Arial,sans-serif" font-weight="700" font-size="18" fill="#1F2B33">Calzada Cetys</text></g>
-          </svg>
+          <!-- Generado con: python3 tools/imagenes.py --croquis -->
+<svg viewBox="120 185 540 520" role="img" aria-labelledby="croquisTitulo">
+<title id="croquisTitulo"><?= e('croquis.titulo') ?></title>
+<defs><clipPath id="sinCruce"><rect x="-400" y="272" width="1600" height="900"/><rect x="-400" y="-200" width="1600" height="404"/></clipPath></defs>
+<rect x="-400" y="-200" width="1600" height="1100" fill="#C7B98F"/>
+<rect x="640" y="40" width="80" height="100" fill="#B5A873"/>
+<rect x="-400" y="690" width="1600" height="40" fill="#A9A06E"/>
+<rect x="300" y="140" width="70" height="52" fill="#C98C6E" stroke="#BDB8AD" stroke-width="1.5"/>
+<rect x="130" y="285" width="136" height="86" fill="#B9B4A6"/>
+<line x1="140" y1="300" x2="140" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="152" y1="300" x2="152" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="164" y1="300" x2="164" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="176" y1="300" x2="176" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="188" y1="300" x2="188" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="200" y1="300" x2="200" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="212" y1="300" x2="212" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="224" y1="300" x2="224" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="236" y1="300" x2="236" y2="318" stroke="#fff" stroke-width="1.2"/>
+<line x1="248" y1="300" x2="248" y2="318" stroke="#fff" stroke-width="1.2"/>
+<rect x="133" y="375" width="135" height="240" fill="#E4E2DC" stroke="#BDB8AD" stroke-width="2"/>
+<rect x="270" y="280" width="95" height="172" fill="#B9B4A6"/>
+<rect x="298" y="296" width="46" height="96" fill="#C0694F" stroke="#BDB8AD" stroke-width="1.5"/>
+<rect x="440" y="272" width="125" height="118" fill="#B9B4A6"/>
+<rect x="466" y="286" width="58" height="42" fill="#F4F4F0" stroke="#BDB8AD" stroke-width="1.5"/>
+<rect x="508" y="336" width="54" height="50" fill="#E4E2DC" stroke="#BDB8AD" stroke-width="1.5"/>
+<rect x="508" y="336" width="54" height="5" fill="#2E7D4F"/><rect x="508" y="341" width="54" height="3" fill="#E8792B"/>
+<rect x="680" y="300" width="80" height="290" rx="10" fill="#F1F1EE" stroke="#BDB8AD" stroke-width="1.5"/>
+<circle cx="60" cy="60" r="9" fill="#6F8466" opacity=".85"/>
+<circle cx="90" cy="120" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="150" cy="70" r="12" fill="#6F8466" opacity=".85"/>
+<circle cx="210" cy="110" r="9" fill="#6F8466" opacity=".85"/>
+<circle cx="250" cy="40" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="530" cy="60" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="580" cy="120" r="8" fill="#6F8466" opacity=".85"/>
+<circle cx="600" cy="30" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="700" cy="180" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="60" cy="300" r="11" fill="#6F8466" opacity=".85"/>
+<circle cx="80" cy="420" r="7" fill="#6F8466" opacity=".85"/>
+<circle cx="70" cy="560" r="9" fill="#6F8466" opacity=".85"/>
+<circle cx="40" cy="640" r="7" fill="#6F8466" opacity=".85"/>
+<circle cx="620" cy="430" r="11" fill="#6F8466" opacity=".85"/>
+<circle cx="580" cy="520" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="660" cy="620" r="7" fill="#6F8466" opacity=".85"/>
+<circle cx="520" cy="460" r="12" fill="#6F8466" opacity=".85"/>
+<circle cx="600" cy="650" r="12" fill="#6F8466" opacity=".85"/>
+<circle cx="250" cy="160" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="170" cy="190" r="10" fill="#6F8466" opacity=".85"/>
+<circle cx="560" cy="190" r="8" fill="#6F8466" opacity=".85"/>
+<rect x="-400" y="207" width="1600" height="62" fill="#D8D4C8"/>
+<path d="M447,-60 C445.8,-33.3 443.7,50.0 440,100 C436.3,150.0 432.5,190.8 425,240 C417.5,289.2 401.7,358.3 395,395 C388.3,431.7 397.0,414.2 385,460 C373.0,505.8 337.2,620.0 323,670 C308.8,720.0 303.8,745.0 300,760" fill="none" stroke="#D8D4C8" stroke-width="76"/>
+<path d="M447,-60 C445.8,-33.3 443.7,50.0 440,100 C436.3,150.0 432.5,190.8 425,240 C417.5,289.2 401.7,358.3 395,395 C388.3,431.7 397.0,414.2 385,460 C373.0,505.8 337.2,620.0 323,670 C308.8,720.0 303.8,745.0 300,760" fill="none" stroke="#3A454C" stroke-width="66"/>
+<rect x="-400" y="212" width="1600" height="52" fill="#3A454C"/>
+<line x1="-400" y1="238" x2="385" y2="238" stroke="#F5B400" stroke-width="3"/>
+<line x1="470" y1="238" x2="1200" y2="238" stroke="#F5B400" stroke-width="3"/>
+<line x1="-400" y1="225" x2="380" y2="225" stroke="#fff" stroke-width="1.5" stroke-dasharray="12 10" opacity=".7"/>
+<line x1="475" y1="225" x2="1200" y2="225" stroke="#fff" stroke-width="1.5" stroke-dasharray="12 10" opacity=".7"/>
+<line x1="-400" y1="251" x2="380" y2="251" stroke="#fff" stroke-width="1.5" stroke-dasharray="12 10" opacity=".7"/>
+<line x1="475" y1="251" x2="1200" y2="251" stroke="#fff" stroke-width="1.5" stroke-dasharray="12 10" opacity=".7"/>
+<path d="M447,-60 C445.8,-33.3 443.7,50.0 440,100 C436.3,150.0 432.5,190.8 425,240 C417.5,289.2 401.7,358.3 395,395 C388.3,431.7 397.0,414.2 385,460 C373.0,505.8 337.2,620.0 323,670 C308.8,720.0 303.8,745.0 300,760" fill="none" stroke="#F5B400" stroke-width="3" clip-path="url(#sinCruce)"/>
+<rect x="40" y="243" width="18" height="9" rx="2" fill="#FFFFFF"/>
+<rect x="160" y="216" width="18" height="9" rx="2" fill="#A63A3A"/>
+<rect x="560" y="243" width="18" height="9" rx="2" fill="#2E5E8C"/>
+<rect x="640" y="216" width="18" height="9" rx="2" fill="#222"/>
+<rect x="760" y="243" width="18" height="9" rx="2" fill="#C9C9C9"/>
+<rect x="-60" y="216" width="18" height="9" rx="2" fill="#FFFFFF"/>
+<rect x="290" y="243" width="18" height="9" rx="2" fill="#A63A3A"/>
+<rect x="366" y="471" width="9" height="18" rx="2" fill="#2E5E8C" transform="rotate(-16 370 480)"/>
+<rect x="398" y="491" width="9" height="18" rx="2" fill="#222" transform="rotate(-16 402 500)"/>
+<rect x="406" y="336" width="9" height="18" rx="2" fill="#C9C9C9" transform="rotate(-12 410 345)"/>
+<rect x="334" y="651" width="9" height="18" rx="2" fill="#FFFFFF" transform="rotate(-16 338 660)"/>
+<polygon points="272,460 352,460 332,530 312,600 292,668 270,668" fill="#CDBB90" stroke="#F5B400" stroke-width="3.5" stroke-dasharray="10 6" stroke-linejoin="round" class="lote activo" data-lote="a" tabindex="0" role="button" aria-label="<?= e('croquis.ver_lote', ['lote' => t('lote.a.nombre')]) ?>"/>
+<polygon points="428,395 458,395 455,678 354,678 376,600 396,530 417,460" fill="#CDBB90" stroke="#F5B400" stroke-width="3.5" stroke-dasharray="10 6" stroke-linejoin="round" class="lote" data-lote="b" tabindex="0" role="button" aria-label="<?= e('croquis.ver_lote', ['lote' => t('lote.b.nombre')]) ?>"/>
+<rect x="420" y="455" width="28" height="44" fill="#A8A397" opacity=".8" pointer-events="none"/>
+<text x="200" y="500" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="15" fill="#5E5B54" pointer-events="none">CEDIS Coppel</text>
+<text x="318" y="440" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="11" fill="#5E5B54" pointer-events="none">Car Wash</text>
+<text x="495" y="312" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="13" fill="#5E5B54" pointer-events="none">bp</text>
+<text x="535" y="369" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="9" fill="#5E5B54" pointer-events="none">7-Eleven</text>
+<text x="335" y="206" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="10" fill="#5E5B54" pointer-events="none">Farmacias Roma</text>
+<g transform="translate(215,238) rotate(0)" pointer-events="none"><rect x="-57" y="-12" width="114" height="25" rx="5" fill="#fff"/><text y="4.7" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="13" fill="#1F2B33">Calzada Cetys</text></g>
+<g transform="translate(585,238) rotate(0)" pointer-events="none"><rect x="-68" y="-12" width="137" height="25" rx="5" fill="#fff"/><text y="4.7" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="13" fill="#1F2B33">Carr. Aeropuerto</text></g>
+<g transform="translate(342,585) rotate(-73)" pointer-events="none"><rect x="-46" y="-10" width="93" height="21" rx="5" fill="#fff"/><text y="4.0" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="11" fill="#1F2B33">Calle Novena</text></g>
+<g transform="translate(454,110) rotate(-86)" pointer-events="none"><rect x="-94" y="-10" width="188" height="21" rx="5" fill="#fff"/><text y="4.0" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="700" font-size="11" fill="#1F2B33">Calz. Abelardo L. Rodríguez</text></g>
+<g pointer-events="none"><rect x="273" y="542" width="72" height="28" rx="14" fill="#1F2B33"/><text x="309" y="561" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="800" font-size="15" fill="#F5B400"><?= e('lote.a.nombre') ?></text></g>
+<g pointer-events="none"><rect x="394" y="560" width="72" height="28" rx="14" fill="#1F2B33"/><text x="430" y="579" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="800" font-size="15" fill="#F5B400"><?= e('lote.b.nombre') ?></text></g>
+<g transform="translate(600,310)" pointer-events="none"><circle r="15" fill="#fff" opacity=".9"/><path d="M0,-10 L6,6 L0,2 L-6,6Z" fill="#1F2B33"/><text y="-19" text-anchor="middle" font-family="Archivo,Arial,Helvetica,sans-serif" font-weight="800" font-size="12" fill="#1F2B33">N</text></g>
+</svg>
         </div>
         <p class="nota-croquis"><?= e('croquis.nota') ?></p>
       </div>

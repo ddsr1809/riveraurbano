@@ -35,6 +35,8 @@ Revisar qué falta traducir: `SELECT * FROM textos_sin_traducir;`
 
 Agregar otro idioma: inserta una fila en `idiomas` y sus textos en `textos`. El selector de idioma aparece solo. (Para que `/fr/` funcione, agrega `fr` a la regla de `.htaccess`.)
 
+Cambios de textos que deban llegar a un sitio ya instalado van como archivo nuevo en `database/migraciones/` (ej. `004_nuevo_texto.sql`). El pipeline aplica cada archivo una sola vez.
+
 Los cambios se ven al recargar la página. Si la base de datos se cae, el sitio sigue mostrándose con la última copia guardada en `cache/`.
 
 ## Probar en tu computadora con Docker
@@ -46,21 +48,59 @@ docker compose up -d
 
 Sitio en http://localhost:8080 · MariaDB en `localhost:3307` (para HeidiSQL, DBeaver o DataGrip). La primera vez se crean las tablas y los textos solos.
 
-## Publicar en hosting con PHP (cPanel, etc.)
+## Despliegue en Vultr (riveraurbano.com)
 
-1. Crea la base de datos y el usuario en el panel, e importa `01_esquema.sql` y luego `02_datos.sql` (phpMyAdmin → Importar).
-2. Copia `config/config.example.php` como `config/config.php` y pon los datos de conexión.
-3. Sube los archivos. Requiere PHP 8.1+, extensión `pdo_mysql` y `mod_rewrite` de Apache.
-4. Dale permiso de escritura a la carpeta `cache/`.
+Cada `push` a `development` corre las pruebas. Cada `push` a `main` corre las pruebas y, si pasan, publica en el servidor. Todo está en `.github/workflows/despliegue.yml`.
 
-Con Nginx, en lugar de `.htaccess`:
+En el servidor corren tres contenedores: **Caddy** (HTTPS automático con Let's Encrypt y redirección de `www`), **web** (PHP 8.3 + Apache) y **db** (MariaDB 11, sin acceso desde internet).
 
-```nginx
-location ~ ^/(includes|config|database|cache|docker|tools)/ { deny all; }
-location ~ ^/(es|en)/?$ { rewrite ^ /index.php last; }
+### Una sola vez
+
+1. **Servidor en Vultr:** Cloud Compute con Ubuntu 24.04, mínimo 1 GB de RAM (mejor 2 GB), región Los Ángeles o Ciudad de México.
+2. **DNS:** en tu proveedor del dominio crea registros A de `riveraurbano.com` y `www.riveraurbano.com` hacia la IP del servidor.
+3. **Preparar el servidor:** entra como root y corre `deploy/servidor-inicial.sh` (instala Docker, firewall, usuario `deploy`, swap y respaldos diarios).
+4. **Llave para GitHub Actions** (en tu computadora):
+   ```bash
+   ssh-keygen -t ed25519 -f riveraurbano_deploy -N "" -C "github-actions"
+   ssh-copy-id -i riveraurbano_deploy.pub deploy@IP_DEL_SERVIDOR   # o pega el .pub en authorized_keys
+   ssh-keyscan IP_DEL_SERVIDOR                                      # salida para VULTR_KNOWN_HOSTS
+   ```
+5. **GitHub → Settings → Environments → New environment `produccion`** y agrega estos secretos:
+
+   | Secreto | Valor |
+   |---|---|
+   | `VULTR_HOST` | IP del servidor |
+   | `VULTR_USUARIO` | `deploy` |
+   | `VULTR_SSH_KEY` | contenido del archivo `riveraurbano_deploy` (la privada) |
+   | `VULTR_KNOWN_HOSTS` | salida de `ssh-keyscan` |
+   | `DB_PASS` | contraseña nueva para el usuario de la BD |
+   | `DB_ROOT_PASS` | contraseña nueva para root de la BD |
+   | `ACME_EMAIL` | tu correo (Let's Encrypt avisa ahí si hay problemas con el certificado) |
+
+   Opcional: en el environment activa *Required reviewers* para aprobar cada publicación.
+
+6. Haz merge de `development` a `main`. El primer despliegue crea la base de datos con todos los textos.
+
+### El video
+
+No va en GitHub. Súbelo directo al servidor:
+
+```bash
+scp dron.mp4 dron-corto.mp4 deploy@IP_DEL_SERVIDOR:/opt/riveraurbano/media/video/
 ```
 
-> GitHub Pages ya no sirve para esta versión porque necesita PHP y base de datos.
+### Tareas comunes
+
+- **Editar textos en producción:** abre un túnel SSH y conecta HeidiSQL, DBeaver o DataGrip a `127.0.0.1:3307` (usuario `riverauser` y tu `DB_PASS`):
+  `ssh -N -L 3307:127.0.0.1:3307 deploy@IP_DEL_SERVIDOR`
+  La base de datos solo escucha dentro del servidor; sin el túnel no se puede entrar desde internet.
+- **Ver logs:** `docker compose -f docker-compose.prod.yml logs -f web`
+- **Respaldos:** `/opt/riveraurbano/respaldos/` (se guardan 14 días). Restaurar:
+  `gunzip -c rivera-FECHA.sql.gz | docker compose -f docker-compose.prod.yml exec -T db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD"'`
+- **Regresar a una versión anterior:** `git revert` del commit en `main` y `push`; el pipeline vuelve a publicar.
+- **Salud del sitio:** `https://riveraurbano.com/salud.php` (sirve para UptimeRobot u otro monitor).
+
+> `DB_PASS` y `DB_ROOT_PASS` solo se aplican al crear la base por primera vez. Para cambiarlas después, cámbialas dentro de MariaDB y luego en los secretos.
 
 ## Imágenes
 

@@ -1,0 +1,119 @@
+# Pruebas en cada push; despliegue a Vultr (riveraurbano.com) solo desde main.
+name: Pruebas y despliegue
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: despliegue-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pruebas:
+    name: Pruebas
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: rivera
+          MARIADB_USER: riverauser
+          MARIADB_PASSWORD: prueba
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql
+          coverage: none
+
+      - name: Sintaxis PHP
+        run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Instalar esquema, textos y migraciones
+        env:
+          SQL_CMD: mysql -h127.0.0.1 -uroot -proot --default-character-set=utf8mb4
+        run: |
+          bash deploy/migrar.sh
+          bash deploy/migrar.sh   # debe poder correr dos veces sin error
+
+      - name: Todos los textos están traducidos
+        run: |
+          faltan=$(mysql -h127.0.0.1 -uroot -proot -N -e "SELECT COUNT(*) FROM rivera.textos_sin_traducir")
+          if [ "$faltan" != "0" ]; then
+            mysql -h127.0.0.1 -uroot -proot -e "SELECT * FROM rivera.textos_sin_traducir"
+            exit 1
+          fi
+
+      - name: Probar el sitio
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: riverauser
+          DB_PASS: prueba
+        run: |
+          php -S 127.0.0.1:8080 index.php > /tmp/php.log 2>&1 &
+          sleep 2
+          bash deploy/prueba-humo.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
+
+      - name: Validar docker-compose de producción
+        env: { DB_PASS: x, DB_ROOT_PASS: x, ACME_EMAIL: x@x.com }
+        run: docker compose -f docker-compose.prod.yml config -q
+
+  desplegar:
+    name: Desplegar a Vultr
+    needs: pruebas
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: produccion
+      url: https://riveraurbano.com
+    env:
+      DESTINO: ${{ secrets.VULTR_USUARIO }}@${{ secrets.VULTR_HOST }}
+      APP: /opt/riveraurbano/app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Llave SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.VULTR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.VULTR_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+
+      - name: Preparar .env de producción
+        run: |
+          umask 077
+          {
+            echo "DB_USER=riverauser"
+            echo "DB_PASS=${{ secrets.DB_PASS }}"
+            echo "DB_ROOT_PASS=${{ secrets.DB_ROOT_PASS }}"
+            echo "ACME_EMAIL=${{ secrets.ACME_EMAIL }}"
+            echo "DOMINIO=riveraurbano.com"
+          } > .env.produccion
+          git log -1 --format='%h %s' > REVISION
+
+      - name: Subir archivos
+        run: |
+          rsync -az --delete --exclude-from=deploy/rsync-excluir.txt ./ "$DESTINO:$APP/"
+          rsync -az --chmod=F600 .env.produccion "$DESTINO:$APP/.env"
+
+      - name: Publicar
+        run: ssh "$DESTINO" "cd $APP && bash deploy/publicar.sh"
+
+      - name: Verificar desde internet
+        run: |
+          for i in $(seq 1 12); do
+            bash deploy/prueba-humo.sh https://riveraurbano.com && exit 0
+            echo "Reintentando en 10 s..."; sleep 10
+          done
+          exit 1

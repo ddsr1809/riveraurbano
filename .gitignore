@@ -13,3 +13,5 @@ assets/video/*.webm
 # IDE
 .idea/workspace.xml
 .idea/shelf/
+REVISION
+.env.produccion

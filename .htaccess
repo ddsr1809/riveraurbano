@@ -5,8 +5,8 @@ AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
   RewriteEngine On
   # Bloquear carpetas internas
-  RewriteRule ^(includes|config|database|cache|docker|tools|\.git|\.idea)(/|$) - [F,L]
-  RewriteRule ^(docker-compose\.yml|LEEME\.md|\.env.*|\.gitignore)$ - [F,L]
+  RewriteRule ^(includes|config|database|cache|docker|tools|deploy|\.git|\.github|\.idea)(/|$) - [F,L]
+  RewriteRule ^(docker-compose.*\.yml|LEEME\.md|REVISION|\.env.*|\.gitignore|\.dockerignore)$ - [F,L]
   # /es/ y /en/ → index.php
   RewriteRule ^(es|en)/?$ index.php [L,QSA]
 </IfModule>

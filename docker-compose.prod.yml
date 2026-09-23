@@ -1,0 +1,65 @@
+# Producción en Vultr: Caddy (HTTPS) → PHP/Apache → MariaDB
+# Lo usa deploy/publicar.sh. Variables en /opt/riveraurbano/app/.env (las escribe el pipeline).
+name: riveraurbano
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: rivera
+      MARIADB_USER: ${DB_USER:-riverauser}
+      MARIADB_PASSWORD: ${DB_PASS:?Falta DB_PASS}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS:?Falta DB_ROOT_PASS}
+    volumes:
+      - datos_mariadb:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    ports:
+      - "127.0.0.1:3307:3306"   # solo accesible desde el propio servidor (túnel SSH); NO desde internet
+
+  web:
+    build: { context: ., dockerfile: docker/Dockerfile }
+    image: riveraurbano-web:latest
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      DB_HOST: db
+      DB_NAME: rivera
+      DB_USER: ${DB_USER:-riverauser}
+      DB_PASS: ${DB_PASS}
+    volumes:
+      - ${MEDIA_DIR:-../media}/video:/var/www/html/assets/video:ro
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/salud.php"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [web]
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?Falta ACME_EMAIL}
+      DOMINIO: ${DOMINIO:-riveraurbano.com}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  datos_mariadb:
+  caddy_data:
+  caddy_config:

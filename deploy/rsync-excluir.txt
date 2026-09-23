@@ -1,11 +1,9 @@
-.git
-.github
-.idea
+.git/
+.github/
+.idea/
 .env
 .env.*
 config/config.php
 cache/*.json
 assets/video/*.mp4
 assets/video/*.webm
-deploy
-docker-compose*.yml
