@@ -75,7 +75,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
-      name: produccion
+      name: production
       url: https://riveraurbano.com
     env:
       DESTINO: ${{ secrets.VULTR_USUARIO }}@${{ secrets.VULTR_HOST }}
