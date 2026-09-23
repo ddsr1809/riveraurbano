@@ -15,7 +15,7 @@ concurrency:
 jobs:
   pruebas:
     name: Pruebas
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       db:
         image: mariadb:11
@@ -29,12 +29,12 @@ jobs:
           --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval=5s --health-timeout=5s --health-retries=20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
-          extensions: pdo_mysql
+          extensions: pdo_mysql, mbstring
           coverage: none
 
       - name: Sintaxis PHP
@@ -64,6 +64,7 @@ jobs:
           php -S 127.0.0.1:8080 index.php > /tmp/php.log 2>&1 &
           sleep 2
           bash deploy/prueba-humo.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
+          bash deploy/prueba-panel.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
 
       - name: Validar docker-compose de producción
         env: { DB_PASS: x, DB_ROOT_PASS: x, ACME_EMAIL: x@x.com }
@@ -73,7 +74,7 @@ jobs:
     name: Desplegar a Vultr
     needs: pruebas
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: production
       url: https://riveraurbano.com
@@ -81,7 +82,23 @@ jobs:
       DESTINO: ${{ secrets.VULTR_USUARIO }}@${{ secrets.VULTR_HOST }}
       APP: /opt/riveraurbano/app
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - name: Revisar secretos
+        env:
+          VULTR_HOST: ${{ secrets.VULTR_HOST }}
+          VULTR_USUARIO: ${{ secrets.VULTR_USUARIO }}
+          VULTR_SSH_KEY: ${{ secrets.VULTR_SSH_KEY }}
+          VULTR_KNOWN_HOSTS: ${{ secrets.VULTR_KNOWN_HOSTS }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_ROOT_PASS: ${{ secrets.DB_ROOT_PASS }}
+          ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+        run: |
+          faltan=0
+          for s in VULTR_HOST VULTR_USUARIO VULTR_SSH_KEY VULTR_KNOWN_HOSTS DB_PASS DB_ROOT_PASS ACME_EMAIL; do
+            if [ -z "${!s}" ]; then echo "::error::Falta el secreto $s en el environment 'production'"; faltan=1; fi
+          done
+          exit $faltan
 
       - name: Llave SSH
         run: |

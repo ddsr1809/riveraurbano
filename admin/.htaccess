@@ -1,0 +1,7 @@
+# Solo se accede por index.php; los estilos y scripts son públicos.
+<FilesMatch "^(lib\.php|\.user\.ini)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>
