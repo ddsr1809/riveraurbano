@@ -56,7 +56,7 @@ function duracion(int $s): string
     return $s <= 0 ? '—' : ($s < 60 ? "{$s} s" : intdiv($s, 60) . ' min ' . ($s % 60) . ' s');
 }
 
-$hayGeo = lector_geoip('GeoLite2-City') !== null;
+$hayGeo = lector_geoip('ciudad') !== null;
 
 /* ================================================================ detalle de una visita */
 if (isset($_GET['id'])) {
@@ -152,7 +152,8 @@ if (isset($_GET['id'])) {
         <?php endforeach; ?></tbody>
       </table></div>
     </section>
-    <?php endif;
+    <?php endif; ?>
+    <?php if (($GLOBALS['FUENTE_GEOIP'] ?? '') === 'dbip'): ?><p class="suave nota credito"><a href="https://db-ip.com" target="_blank" rel="noopener">IP Geolocation by DB-IP</a> · datos bajo licencia CC BY 4.0</p><?php endif;
     return;
 }
 
@@ -260,7 +261,7 @@ function barras_top(array $filas, string $etiqueta = 'k', ?callable $fmt = null)
 <p class="intro">Quién entra al sitio, desde dónde y si es una persona o un programa. Una visita se confirma como <strong>persona</strong> cuando mueve el mouse, toca la pantalla o desplaza la página; los bots casi nunca lo hacen.</p>
 
 <?php if (!$hayGeo): ?>
-<div class="alerta alerta-aviso">La ubicación por IP (país, ciudad, proveedor) está desactivada. Para activarla, agrega los secretos <code>MAXMIND_ACCOUNT_ID</code> y <code>MAXMIND_LICENSE_KEY</code> en GitHub (ver LEEME). Todo lo demás ya funciona.</div>
+<div class="alerta alerta-aviso">La ubicación por IP (país, ciudad, proveedor) todavía no está lista. El servidor descarga la base gratuita de DB-IP al publicar; si tras unos minutos sigue este aviso, revisa <code>docker compose -f docker-compose.prod.yml logs geoip</code>. Todo lo demás ya funciona.</div>
 <?php endif; ?>
 
 <form method="get" action="/admin/" class="filtros-visitas">
@@ -383,3 +384,7 @@ function barras_top(array $filas, string $etiqueta = 'k', ?callable $fmt = null)
     <p class="suave nota">Consejo: al compartir tu enlace, agrega <code>?utm_source=facebook</code> (o whatsapp, inmuebles24…) para saber exactamente de dónde llega cada persona.</p>
   </section>
 </div>
+
+<?php if (($GLOBALS['FUENTE_GEOIP'] ?? '') === 'dbip'): ?>
+<p class="suave nota credito"><a href="https://db-ip.com" target="_blank" rel="noopener">IP Geolocation by DB-IP</a> · datos bajo licencia CC BY 4.0</p>
+<?php endif; ?>

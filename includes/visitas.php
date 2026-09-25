@@ -107,30 +107,51 @@ function analizar_ua(string $ua): array
 /** Proveedores de servidores en la nube: una "persona" no suele navegar desde ahí. */
 function es_centro_datos(string $org): bool
 {
+    // Nombres de proveedores de nube/hosting + palabras genéricas (hosting, servers, vps, cloud, colocation…).
+    // Ampliada con los proveedores detectados en el tráfico real de d2600.com.
     return (bool) preg_match('/amazon|aws|google cloud|google llc|microsoft|azure|digitalocean|ovh|hetzner|linode|akamai|vultr|choopa|'
-        . 'oracle|alibaba|tencent|huawei cloud|contabo|scaleway|leaseweb|m247|datacamp|cloudflare|fastly|hostinger|ionos|godaddy|'
+        . 'oracle|alibaba|tencent|huawei|contabo|scaleway|leaseweb|m247|datacamp|cloudflare|fastly|hostinger|ionos|godaddy|'
         . 'hurricane electric|colocrossing|psychz|quadranet|servers\.com|constant company|zenlayer|g-?core|stark industries|'
-        . 'frantech|buyvm|packethub|datapacket|hostroyale|kamatera|upcloud|ionos|hostwinds|interserver|netcup|limestone|'
-        . 'performive|tzulo|cdn77|bunny|shock hosting|pq hosting|aeza|serverion|hydra|iptp|nforce|worldstream|clouvider/i', $org);
+        . 'frantech|buyvm|packethub|datapacket|hostroyale|kamatera|upcloud|hostwinds|interserver|netcup|limestone|'
+        . 'performive|tzulo|cdn77|bunny|shock hosting|pq hosting|aeza|serverion|iptp|nforce|worldstream|clouvider|'
+        . 'techoff|storm industries|aceville|ucloud|ip volume|miteflux|blix solutions|omegatech|unmanaged ltd|biterika|'
+        . 'petersburg internet network|applied privacy|kaopu|capitalonline|pfcloud|flyservers|carinet|censys|strato|'
+        . 'hostpapa|glesys|hydra communications|maxihost|vdsina|new dream network|dreamhost|'
+        . '\\bhost(ings?)?\\b|\\bservers?\\b|\\bvps\\b|\\bcloud\\b|\\bcolo(cation)?\\b|data ?cent(er|re)|dedicated/i', $org);
 }
 
-function lector_geoip(string $base): ?\MaxMind\Db\Reader
+/** Sitios que mandan visitas falsas para aparecer en tus estadísticas (spam de referencia). */
+function es_spam_referencia(string $referente): bool
 {
-    static $cache = [];
-    if (array_key_exists($base, $cache)) return $cache[$base];
-    $dir = getenv('GEOIP_DIR') ?: '/usr/share/GeoIP';
-    $archivo = "$dir/$base.mmdb";
-    if (!is_file($archivo)) $archivo = "$dir/$base-Test.mmdb";   // bases de prueba (tools/geoip-prueba)
-    if (!is_file($archivo)) return $cache[$base] = null;
-    static $cargador = false;
+    return $referente !== '' && (bool) preg_match('~//([a-z0-9-]+\.)*(chordmp3\.net|addurl\.in|semalt\.com|buttons-for-website\.com|'
+        . 'best-seo-offer\.com|darodar\.com|ilovevitaly\.|priceg\.com|hulfingtonpost\.com|free-social-buttons|get-free-traffic)~i', $referente);
+}
+
+function lector_geoip(string $tipo): ?\MaxMind\Db\Reader
+{
+    static $cache = [], $cargador = false;
+    if (array_key_exists($tipo, $cache)) return $cache[$tipo];
     if (!$cargador) {
         spl_autoload_register(function ($c) {
             if (str_starts_with($c, 'MaxMind\\Db\\')) require_once __DIR__ . '/' . str_replace('\\', '/', $c) . '.php';
         });
         $cargador = true;
     }
-    try { return $cache[$base] = new \MaxMind\Db\Reader($archivo); }
-    catch (Throwable $e) { error_log("[visitas] GeoIP $base: " . $e->getMessage()); return $cache[$base] = null; }
+    $dir = getenv('GEOIP_DIR') ?: '/usr/share/GeoIP';
+    $candidatos = $tipo === 'ciudad'
+        ? ['GeoLite2-City', 'dbip-city-lite', 'GeoLite2-City-Test']
+        : ['GeoLite2-ASN', 'dbip-asn-lite', 'GeoLite2-ASN-Test'];
+    foreach ($candidatos as $base) {
+        $archivo = "$dir/$base.mmdb";
+        if (!is_file($archivo)) continue;
+        try {
+            $GLOBALS['FUENTE_GEOIP'] ??= str_starts_with($base, 'dbip') ? 'dbip' : 'maxmind';
+            return $cache[$tipo] = new \MaxMind\Db\Reader($archivo);
+        } catch (Throwable $e) {
+            error_log("[visitas] GeoIP $base: " . $e->getMessage());
+        }
+    }
+    return $cache[$tipo] = null;
 }
 
 /** Ubicación aproximada y dueño de la IP (bases GeoLite2 locales; no se envía la IP a nadie). */
@@ -142,9 +163,9 @@ function geolocalizar(string $ip): array
         $r['organizacion'] = 'Red local';
         return $r;
     }
-    $nombre = fn($n) => $n['names']['es'] ?? $n['names']['en'] ?? '';
+    $nombre = fn($n) => trim((string) preg_replace('/\s*\((el|la|los|las)\)$/u', '', $n['names']['es'] ?? $n['names']['en'] ?? ''));
     try {
-        if ($c = lector_geoip('GeoLite2-City')?->get($ip)) {
+        if ($c = lector_geoip('ciudad')?->get($ip)) {
             $r['pais_codigo'] = $c['country']['iso_code'] ?? '';
             $r['pais']        = isset($c['country']) ? $nombre($c['country']) : '';
             $r['region']      = isset($c['subdivisions'][0]) ? $nombre($c['subdivisions'][0]) : '';
@@ -155,7 +176,7 @@ function geolocalizar(string $ip): array
             $r['radio_km']    = $c['location']['accuracy_radius'] ?? null;
             $r['zona_horaria'] = $c['location']['time_zone'] ?? '';
         }
-        if ($a = lector_geoip('GeoLite2-ASN')?->get($ip)) {
+        if ($a = lector_geoip('asn')?->get($ip)) {
             $r['asn'] = $a['autonomous_system_number'] ?? null;
             $r['organizacion'] = mb_substr($a['autonomous_system_organization'] ?? '', 0, 150);
             $r['centro_datos'] = es_centro_datos($r['organizacion']) ? 1 : 0;
@@ -213,6 +234,7 @@ function registrar_visita(string $idioma): ?string
         $geo = geolocalizar($ip);
         [$nav, $so, $disp] = analizar_ua($ua);
         $bot = detectar_bot($ua);
+        if (!$bot && es_spam_referencia($ref)) $bot = ['bot', 'Spam de referencia'];
         $motivo = '';
         if ($bot) {
             [$tipo, $nombreBot] = $bot;
