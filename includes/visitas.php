@@ -226,8 +226,8 @@ function registrar_visita(string $idioma): ?string
         $ip  = ip_cliente();
         $ua  = mb_substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500);
         $ref = mb_substr((string) ($_SERVER['HTTP_REFERER'] ?? ''), 0, 500);
-        $host = strtolower((string) preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')));
-        if ($ref !== '' && strtolower((string) parse_url($ref, PHP_URL_HOST)) === $host) $ref = '';   // navegación interna
+        $host = sin_www(strtolower((string) preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? ''))));
+        if ($ref !== '' && sin_www(strtolower((string) parse_url($ref, PHP_URL_HOST))) === $host) $ref = '';   // navegación interna
         $acepta = mb_substr((string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''), 0, 100);
         $utm = fn($k) => mb_substr(trim((string) ($_GET[$k] ?? '')), 0, 100);
 
@@ -335,3 +335,65 @@ function registrar_senal(string $token, string $senal, string $detalle): void
                ->execute([$id, date('Y-m-d H:i:s'), $senal, mb_substr($detalle, 0, 255)]);
     }
 }
+
+function sin_www(string $host): string
+{
+    return (string) preg_replace('/^www\./', '', $host);
+}
+
+/** Qué bases de ubicación hay en el servidor y de qué mes son. */
+function estado_geoip(): array
+{
+    $dir = getenv('GEOIP_DIR') ?: '/usr/share/GeoIP';
+    $r = [];
+    foreach (['ciudad' => ['GeoLite2-City', 'dbip-city-lite', 'GeoLite2-City-Test'], 'proveedor' => ['GeoLite2-ASN', 'dbip-asn-lite', 'GeoLite2-ASN-Test']] as $tipo => $bases) {
+        $r[$tipo] = null;
+        foreach ($bases as $b) {
+            $f = "$dir/$b.mmdb";
+            if (!is_file($f)) continue;
+            $version = is_file("$f.version") ? trim((string) file_get_contents("$f.version")) : date('Y-m', (int) filemtime($f));
+            $r[$tipo] = ['archivo' => "$b.mmdb", 'version' => $version, 'tamano' => filesize($f)];
+            break;
+        }
+    }
+    return $r;
+}
+
+/**
+ * Agrega país, ciudad y proveedor a visitas que se guardaron sin ubicación
+ * (por ejemplo, antes de que el servidor terminara de descargar la base).
+ * Si resulta que la IP es de un centro de datos, la "probable persona" pasa a "sospechoso".
+ * Devuelve cuántas se revisaron, cuántas se completaron y cuántas cambiaron a sospechoso.
+ */
+function completar_ubicacion(int $limite = 5000): array
+{
+    $n = ['revisadas' => 0, 'completadas' => 0, 'sospechosas' => 0];
+    if (lector_geoip('ciudad') === null && lector_geoip('asn') === null) return $n;
+    $db = db();
+    $st = $db->prepare("SELECT id, ip, tipo, interaccion, motivo FROM visitas
+                        WHERE pais_codigo = '' AND organizacion = '' ORDER BY id DESC LIMIT " . max(1, $limite));
+    $st->execute();
+    $upd = $db->prepare('UPDATE visitas SET pais_codigo = ?, pais = ?, region = ?, ciudad = ?, codigo_postal = ?, latitud = ?,
+                         longitud = ?, radio_km = ?, zona_horaria = ?, asn = ?, organizacion = ?, centro_datos = ?, tipo = ?, motivo = ?
+                         WHERE id = ?');
+    $cache = [];
+    foreach ($st->fetchAll() as $v) {
+        $n['revisadas']++;
+        $g = $cache[$v['ip']] ??= geolocalizar($v['ip']);
+        if ($g['pais_codigo'] === '' && $g['organizacion'] === '') continue;
+        $tipo = $v['tipo']; $motivo = $v['motivo'];
+        if ($g['centro_datos'] && $tipo === 'probable' && !$v['interaccion']) {
+            $tipo = 'sospechoso';
+            $motivo = 'Sospechoso: la IP es de un centro de datos (' . $g['organizacion'] . '), no de un hogar o celular';
+            $n['sospechosas']++;
+        }
+        $upd->execute([$g['pais_codigo'], $g['pais'], $g['region'], $g['ciudad'], $g['codigo_postal'], $g['latitud'],
+                       $g['longitud'], $g['radio_km'], $g['zona_horaria'], $g['asn'], $g['organizacion'],
+                       $g['centro_datos'], $tipo, mb_substr($motivo, 0, 255), $v['id']]);
+        $n['completadas']++;
+    }
+    // Referencias del propio sitio que se guardaron como "fuente"
+    $db->exec("UPDATE visitas SET fuente = 'Directo', referente = '' WHERE fuente = 'riveraurbano.com'");
+    return $n;
+}
+
