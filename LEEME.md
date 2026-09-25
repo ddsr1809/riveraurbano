@@ -36,14 +36,13 @@ En **Visitas** ves quién entra al sitio y qué hace:
 
 No usa cookies. Las visitas se borran solas después de 180 días (se cambia en la misma página). La IP y la ubicación son datos personales según la ley mexicana: menciónalo en tu aviso de privacidad.
 
-#### Activar la ubicación por IP (gratis)
+#### Ubicación por IP (gratis, sin cuenta)
 
-1. Crea una cuenta gratuita en https://www.maxmind.com/en/geolite2/signup
-2. En tu cuenta: **Manage License Keys → Generate new license key**. Anota el *Account ID* y la *License key*.
-3. En GitHub → Settings → Environments → **production**, agrega los secretos `MAXMIND_ACCOUNT_ID` y `MAXMIND_LICENSE_KEY`.
-4. Publica de nuevo. El servidor descarga las bases GeoLite2 y las actualiza cada 3 días. Las IPs se consultan en el propio servidor; no se envían a nadie.
+Se usa la base **DB-IP Lite** (licencia CC BY 4.0): el contenedor `geoip` la descarga sola al publicar y cada mes revisa si hay versión nueva. No requiere cuenta, pago ni secretos, y las IPs se consultan en el propio servidor, sin mandarlas a nadie. La licencia pide mostrar el crédito "IP Geolocation by DB-IP", que ya aparece en la página de Visitas.
 
-Sin estos secretos todo funciona igual, solo sin país, ciudad ni proveedor.
+Si algún día quieres más precisión, basta con poner los archivos `GeoLite2-City.mmdb` y `GeoLite2-ASN.mmdb` de MaxMind en el volumen `geoip`: el sitio los prefiere automáticamente.
+
+Para revisar la descarga: `docker compose -f docker-compose.prod.yml logs geoip`
 
 ### Crear tu usuario (una vez)
 

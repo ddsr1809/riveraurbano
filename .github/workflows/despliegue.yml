@@ -119,12 +119,6 @@ jobs:
             echo "DB_ROOT_PASS=${{ secrets.DB_ROOT_PASS }}"
             echo "ACME_EMAIL=${{ secrets.ACME_EMAIL }}"
             echo "DOMINIO=riveraurbano.com"
-            # Ubicación por IP (opcional): solo si existen los secretos de MaxMind
-            if [ -n "${{ secrets.MAXMIND_LICENSE_KEY }}" ]; then
-              echo "MAXMIND_ACCOUNT_ID=${{ secrets.MAXMIND_ACCOUNT_ID }}"
-              echo "MAXMIND_LICENSE_KEY=${{ secrets.MAXMIND_LICENSE_KEY }}"
-              echo "COMPOSE_PROFILES=geoip"
-            fi
           } > .env.produccion
           git log -1 --format='%h %s' > REVISION
 
