@@ -9,6 +9,9 @@ $pendLotes = (int) $db->query("SELECT COUNT(*) FROM textos WHERE clave LIKE 'lot
                                AND (valor LIKE '%Por confirmar%' OR valor = 'Consultar')")->fetchColumn();
 $cambios = $db->query('SELECT usuario, accion, detalle, fecha FROM bitacora ORDER BY id DESC LIMIT 12')->fetchAll();
 $videoOk = is_file(carpeta_video() . '/dron.mp4');
+$hoy = $db->query("SELECT SUM(tipo IN ('humano','probable')) p, SUM(tipo IN ('bot','herramienta','sospechoso')) b FROM visitas WHERE fecha >= CURDATE()")->fetch();
+$contactosSemana = (int) $db->query("SELECT COUNT(*) FROM visitas_eventos e JOIN visitas v ON v.id = e.visita_id
+    WHERE e.fecha >= NOW() - INTERVAL 7 DAY AND v.tipo IN ('humano','probable') AND e.evento IN ('whatsapp','llamar','correo','formulario')")->fetchColumn();
 
 $pendientes = [];
 if (($cfg['whatsapp'] ?? '') === '526860000000' || ($cfg['telefono'] ?? '') === '686 000 0000')
@@ -39,6 +42,8 @@ if ($faltantes > 0)
 <?php endif; ?>
 
 <div class="cifras">
+  <a class="cifra cifra-enlace" href="<?= h(url_admin('visitas', ['rango' => 1])) ?>"><strong><?= (int) $hoy['p'] ?></strong><span>personas hoy (y <?= (int) $hoy['b'] ?> bots)</span></a>
+  <a class="cifra cifra-enlace" href="<?= h(url_admin('visitas')) ?>"><strong><?= $contactosSemana ?></strong><span>clics para contactar en 7 días</span></a>
   <?php foreach ($idiomas as $i): ?>
     <div class="cifra"><strong><?= (int) ($porIdioma[$i['codigo']] ?? 0) ?></strong><span>textos en <?= h($i['nombre']) ?></span></div>
   <?php endforeach; ?>

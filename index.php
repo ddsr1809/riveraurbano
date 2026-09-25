@@ -13,6 +13,17 @@ if (PHP_SAPI === 'cli-server') {
 
 require __DIR__ . '/includes/bootstrap.php';
 
+// Solo estas direcciones son páginas; lo demás es 404 (y no se cuenta como visita)
+$rutaPedida = (string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+if (!preg_match('#^/((es|en)/?)?(index\.php)?$#', $rutaPedida)) {
+    http_response_code(404);
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+       . '<title>No encontrado · Rivera Urbano</title><body style="font-family:system-ui;padding:2rem">'
+       . '<h1>Página no encontrada</h1><p><a href="/es/">Ir al inicio</a> · <a href="/en/">Go to home page</a></p></body>';
+    exit;
+}
+
 try {
     [$lang, $explicito] = detectar_idioma();
     $IDIOMAS = idiomas();
@@ -36,6 +47,9 @@ if ($explicito) {
     setcookie('idioma', $lang, ['expires' => time() + 31536000, 'path' => '/', 'samesite' => 'Lax',
                                 'secure' => !empty($_SERVER['HTTPS']) || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https']);
 }
+require_once __DIR__ . '/includes/visitas.php';
+$tokenVisita = registrar_visita($lang);
+
 header('Content-Language: ' . $lang);
 header('Vary: Accept-Language, Cookie');
 
@@ -59,6 +73,7 @@ $js = [
     'videoPortada' => cfg('video_portada'),
     'videoTitulo'  => t('video.iframe'),
     'textos'       => $js_textos,
+    'visita'       => $tokenVisita,
 ];
 ?>
 <!DOCTYPE html>

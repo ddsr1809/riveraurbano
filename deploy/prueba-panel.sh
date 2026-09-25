@@ -20,6 +20,9 @@ curl -fsS -c "$J" -b "$J" -o /dev/null -L --data-urlencode "csrf=$t" --data-urle
 pagina="$(curl -fsS -c "$J" -b "$J" "$URL/admin/?p=textos&s=portada")"
 grep -q "Textos del sitio" <<<"$pagina" || { echo "✗ no se pudo entrar al panel"; exit 1; }
 echo "✓ acceso al panel"
+v="$(curl -fsS -c "$J" -b "$J" "$URL/admin/?p=visitas&tipo=todo")"
+grep -qF "clics para contactar" <<<"$v" || { echo "✗ la página de visitas no carga"; exit 1; }
+echo "✓ página de visitas"
 
 t="$(csrf <<<"$pagina")"
 curl -fsS -c "$J" -b "$J" -o /dev/null -L --data-urlencode "csrf=$t" --data-urlencode "s=portada" \

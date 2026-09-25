@@ -95,4 +95,43 @@
       window.open(linkWhats(lineas), "_blank", "noopener");
     }
   });
+
+  // Registro de visitas: confirma que es una persona y cuenta clics importantes (sin cookies)
+  (function () {
+    if (!S.visita || !navigator.sendBeacon) return;
+    const inicio = Date.now();
+    const senal = (e, d) => {
+      const f = new FormData();
+      f.append("t", S.visita); f.append("e", e); if (d !== undefined) f.append("d", String(d));
+      navigator.sendBeacon("/v.php", f);
+    };
+    senal("js", screen.width + "x" + screen.height);
+    let interactuo = false;
+    const alInteractuar = () => {
+      if (interactuo) return;
+      interactuo = true;
+      senal("interaccion");
+      ["pointermove", "pointerdown", "scroll", "keydown", "touchstart"].forEach(t => removeEventListener(t, alInteractuar, true));
+    };
+    ["pointermove", "pointerdown", "scroll", "keydown", "touchstart"].forEach(t => addEventListener(t, alInteractuar, { capture: true, passive: true }));
+    let enviadoSalida = false;
+    const salir = () => { if (!enviadoSalida) { enviadoSalida = true; senal("salida", Math.round((Date.now() - inicio) / 1000)); } };
+    addEventListener("pagehide", salir);
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") salir(); else enviadoSalida = false; });
+
+    document.addEventListener("click", e => {
+      const a = e.target.closest("a");
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (href.startsWith("https://wa.me/")) senal("whatsapp", (a.textContent || "").trim().slice(0, 80));
+      else if (href.startsWith("tel:")) senal("llamar");
+      else if (href.startsWith("mailto:")) senal("correo");
+      else if (href.includes("google.com/maps")) senal("mapa");
+      else if (a.hasAttribute("hreflang")) senal("idioma", a.getAttribute("hreflang"));
+    }, true);
+    $$(".pestana, .croquis .lote").forEach(el => el.addEventListener("click", () => senal("lote", el.dataset.lote)));
+    const v = $("#videoDron");
+    if (v) v.addEventListener("play", () => senal("video"), { once: true });
+    if (form) form.addEventListener("submit", () => senal("formulario", via), true);
+  })();
 })();

@@ -1,0 +1,1 @@
+Lector MaxMind DB para PHP, copiado de github.com/maxmind/MaxMind-DB-Reader-php (commit 8a1f03e, 2026-09-22). Licencia Apache 2.0.

@@ -6,6 +6,8 @@ declare(strict_types=1);
  */
 
 const RAIZ = __DIR__ . '/..';
+const ZONA_HORARIA = 'America/Tijuana';   // Mexicali
+date_default_timezone_set(ZONA_HORARIA);
 
 /* ------------------------------------------------------------------
  * Configuración: config/config.php y, si existen, variables de entorno
@@ -43,7 +45,31 @@ function db(): PDO
         PDO::ATTR_EMULATE_PREPARES   => false,
         PDO::ATTR_TIMEOUT            => 5,
     ]);
+    // Misma hora que PHP (Mexicali), sin depender de las tablas de zonas de MariaDB
+    $pdo->exec("SET time_zone = '" . (new DateTime('now'))->format('P') . "'");
     return $pdo;
+}
+
+/* ------------------------------------------------------------------
+ * Red: HTTPS e IP real (detrás de Caddy)
+ * ------------------------------------------------------------------ */
+
+function es_https(): bool
+{
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+}
+
+/** IP real del visitante. Solo confía en X-Forwarded-For si la conexión viene de la red interna (Caddy). */
+function ip_cliente(): string
+{
+    $remota = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $publica = filter_var($remota, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+    if ($publica === false && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $primera = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
+        if (filter_var($primera, FILTER_VALIDATE_IP)) return $primera;
+    }
+    return $remota;
 }
 
 /* ------------------------------------------------------------------
