@@ -36,6 +36,11 @@
     form.addEventListener("submit", function (e) { if (!confirm(form.dataset.confirmar)) e.preventDefault(); });
   });
 
+  // Filtros que se aplican al cambiar
+  document.querySelectorAll("select[data-autoenviar]").forEach(function (sel) {
+    sel.addEventListener("change", function () { sel.form.submit(); });
+  });
+
   // 3) Subida de video con barra de progreso
   function mb(b) { return (b / 1048576).toFixed(b > 104857600 ? 0 : 1) + " MB"; }
   document.querySelectorAll("form[data-subir]").forEach(function (form) {

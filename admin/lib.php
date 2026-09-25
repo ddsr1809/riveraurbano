@@ -12,26 +12,6 @@ const MAX_FALLOS_IP     = 10;    // intentos fallidos por IP en la ventana
 const MAX_FALLOS_USUARIO = 5;    // intentos fallidos por usuario en la ventana
 const VENTANA_MINUTOS   = 15;
 
-/* ------------------------------------------------------------------ red */
-
-function es_https(): bool
-{
-    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
-}
-
-/** IP real del visitante. Solo confía en X-Forwarded-For si la conexión viene de la red interna (Caddy). */
-function ip_cliente(): string
-{
-    $remota = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    $publica = filter_var($remota, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
-    if ($publica === false && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $primera = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
-        if (filter_var($primera, FILTER_VALIDATE_IP)) return $primera;
-    }
-    return $remota;
-}
-
 /* ------------------------------------------------------------------ sesión */
 
 function iniciar_sesion(): void

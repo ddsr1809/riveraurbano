@@ -19,7 +19,31 @@ En **https://riveraurbano.com/admin** puedes, sin tocar código ni SQL:
 - **Textos:** editar todo lo que dice el sitio, en español e inglés lado a lado, agrupado por sección y con buscador. Marca en amarillo lo que cambiaste y avisa si intentas salir sin guardar.
 - **Contacto y ajustes:** WhatsApp, teléfono, correo, video de YouTube y ubicación del mapa. Acepta el número con espacios o `+` y un enlace completo de YouTube; los limpia solo.
 - **Video:** subir o reemplazar el video del dron y el clip de la portada, con barra de progreso (hasta 600 MB).
-- **Inicio:** pendientes (por ejemplo, si el WhatsApp sigue siendo el de ejemplo) y bitácora de quién cambió qué.
+- **Inicio:** pendientes (por ejemplo, si el WhatsApp sigue siendo el de ejemplo), visitas de hoy y bitácora de quién cambió qué.
+- **Visitas:** quién entra, desde dónde y si es persona o bot (ver abajo).
+
+### Visitas
+
+En **Visitas** ves quién entra al sitio y qué hace:
+
+- **Persona o bot:** cada visita se clasifica como *Persona* (movió el mouse, tocó o desplazó la página), *Probable persona*, *Sospechoso*, *Bot* (Google, Bing, IA…), *Vista previa* (alguien compartió el enlace en WhatsApp, Facebook, etc.), *Herramienta* (curl, programas automáticos) o *Interna* (tus IPs).
+- **Detecta impostores:** un "Googlebot" que no viene de la red de Google, navegadores automatizados, IPs de servidores en la nube.
+- **De dónde llegan:** Google, Facebook, portales inmobiliarios, directo, o la campaña si el enlace lleva `?utm_source=…`.
+- **Datos de la IP:** país, estado, ciudad, código postal y ubicación aproximada, proveedor de internet, si es conexión de casa o de un servidor, nombre DNS y todas sus visitas. Enlaces a ipinfo.io y AbuseIPDB.
+- **Qué hicieron:** clics a WhatsApp, llamar, correo, mapa, video, lote consultado, envío del formulario y tiempo en la página.
+- Filtros por periodo, tipo, país y búsqueda; exportar a CSV (se abre en Excel).
+- Botón **"No contar mi IP"** para que tus propias visitas no se mezclen.
+
+No usa cookies. Las visitas se borran solas después de 180 días (se cambia en la misma página). La IP y la ubicación son datos personales según la ley mexicana: menciónalo en tu aviso de privacidad.
+
+#### Activar la ubicación por IP (gratis)
+
+1. Crea una cuenta gratuita en https://www.maxmind.com/en/geolite2/signup
+2. En tu cuenta: **Manage License Keys → Generate new license key**. Anota el *Account ID* y la *License key*.
+3. En GitHub → Settings → Environments → **production**, agrega los secretos `MAXMIND_ACCOUNT_ID` y `MAXMIND_LICENSE_KEY`.
+4. Publica de nuevo. El servidor descarga las bases GeoLite2 y las actualiza cada 3 días. Las IPs se consultan en el propio servidor; no se envían a nadie.
+
+Sin estos secretos todo funciona igual, solo sin país, ciudad ni proveedor.
 
 ### Crear tu usuario (una vez)
 

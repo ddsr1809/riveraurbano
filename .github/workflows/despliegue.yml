@@ -60,11 +60,14 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_USER: riverauser
           DB_PASS: prueba
+          GEOIP_DIR: tools/geoip-prueba
+          MYSQL_CMD: mysql -h127.0.0.1 -uroot -proot --default-character-set=utf8mb4 rivera
         run: |
           php -S 127.0.0.1:8080 index.php > /tmp/php.log 2>&1 &
           sleep 2
           bash deploy/prueba-humo.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
           bash deploy/prueba-panel.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
+          bash deploy/prueba-visitas.sh http://127.0.0.1:8080 || { cat /tmp/php.log; exit 1; }
 
       - name: Validar docker-compose de producción
         env: { DB_PASS: x, DB_ROOT_PASS: x, ACME_EMAIL: x@x.com }
@@ -116,6 +119,12 @@ jobs:
             echo "DB_ROOT_PASS=${{ secrets.DB_ROOT_PASS }}"
             echo "ACME_EMAIL=${{ secrets.ACME_EMAIL }}"
             echo "DOMINIO=riveraurbano.com"
+            # Ubicación por IP (opcional): solo si existen los secretos de MaxMind
+            if [ -n "${{ secrets.MAXMIND_LICENSE_KEY }}" ]; then
+              echo "MAXMIND_ACCOUNT_ID=${{ secrets.MAXMIND_ACCOUNT_ID }}"
+              echo "MAXMIND_LICENSE_KEY=${{ secrets.MAXMIND_LICENSE_KEY }}"
+              echo "COMPOSE_PROFILES=geoip"
+            fi
           } > .env.produccion
           git log -1 --format='%h %s' > REVISION
 

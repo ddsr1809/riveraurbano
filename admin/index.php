@@ -17,6 +17,7 @@ try {
     iniciar_sesion();
     $PAGINAS = [
         'inicio'   => 'Inicio',
+        'visitas'  => 'Visitas',
         'textos'   => 'Textos',
         'config'   => 'Contacto y ajustes',
         'archivos' => 'Video',
