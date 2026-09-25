@@ -27,6 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $guardarExcluidas(array_diff($excluidas, [$ip]));
         bitacora('Visitas', "IP $ip ya no se considera propia");
         flash('ok', "La IP $ip vuelve a contarse normalmente en visitas nuevas.");
+    } elseif ($accion === 'completar') {
+        $r = completar_ubicacion();
+        if ($r['completadas'] === 0 && $r['revisadas'] === 0) flash('aviso', 'No había visitas sin ubicación, o la base de ubicación aún no está en el servidor.');
+        else {
+            bitacora('Visitas', "Ubicación completada en {$r['completadas']} visitas ({$r['sospechosas']} pasaron a sospechoso)");
+            flash('ok', "Se completó la ubicación de {$r['completadas']} visita(s); {$r['sospechosas']} venían de centros de datos y ahora aparecen como sospechosas.");
+        }
     } elseif ($accion === 'dias') {
         $dias = max(30, min(730, (int) ($_POST['dias'] ?? 180)));
         $db->prepare("UPDATE configuracion SET valor = ? WHERE clave = 'visitas_dias'")->execute([(string) $dias]);
@@ -260,8 +267,23 @@ function barras_top(array $filas, string $etiqueta = 'k', ?callable $fmt = null)
 <h1>Visitas</h1>
 <p class="intro">Quién entra al sitio, desde dónde y si es una persona o un programa. Una visita se confirma como <strong>persona</strong> cuando mueve el mouse, toca la pantalla o desplaza la página; los bots casi nunca lo hacen.</p>
 
-<?php if (!$hayGeo): ?>
-<div class="alerta alerta-aviso">La ubicación por IP (país, ciudad, proveedor) todavía no está lista. El servidor descarga la base gratuita de DB-IP al publicar; si tras unos minutos sigue este aviso, revisa <code>docker compose -f docker-compose.prod.yml logs geoip</code>. Todo lo demás ya funciona.</div>
+<?php
+$geo = estado_geoip();
+$sinUbicacion = (int) $db->query("SELECT COUNT(*) FROM visitas WHERE pais_codigo = '' AND organizacion = ''")->fetchColumn();
+?>
+<?php if (!$geo['ciudad'] || !$geo['proveedor']): ?>
+<div class="alerta alerta-error">
+  <strong>La base de ubicación no está en el servidor<?= $geo['ciudad'] || $geo['proveedor'] ? ' completa' : '' ?>.</strong>
+  Sin ella no se puede saber el país, la ciudad ni el proveedor de cada IP, ni detectar servidores en la nube.
+  El contenedor <code>geoip</code> la descarga sola; revisa en el servidor:
+  <code>docker compose -f docker-compose.prod.yml logs geoip</code>
+</div>
+<?php elseif ($sinUbicacion > 0): ?>
+<div class="alerta alerta-aviso fila-form">
+  <span>Hay <strong><?= $sinUbicacion ?></strong> visitas guardadas sin ubicación (probablemente antes de que la base terminara de descargarse).</span>
+  <form method="post" action="<?= h(url_admin('visitas')) ?>"><?= csrf_campo() ?><input type="hidden" name="accion" value="completar">
+    <button class="btn btn-chico">Completar ubicación</button></form>
+</div>
 <?php endif; ?>
 
 <form method="get" action="/admin/" class="filtros-visitas">
@@ -385,6 +407,8 @@ function barras_top(array $filas, string $etiqueta = 'k', ?callable $fmt = null)
   </section>
 </div>
 
+<p class="suave nota">Base de ubicación: <?= $geo['ciudad'] ? h($geo['ciudad']['archivo'] . ' (' . $geo['ciudad']['version'] . ')') : 'ciudad no disponible' ?> ·
+  <?= $geo['proveedor'] ? h($geo['proveedor']['archivo'] . ' (' . $geo['proveedor']['version'] . ')') : 'proveedor no disponible' ?></p>
 <?php if (($GLOBALS['FUENTE_GEOIP'] ?? '') === 'dbip'): ?>
 <p class="suave nota credito"><a href="https://db-ip.com" target="_blank" rel="noopener">IP Geolocation by DB-IP</a> · datos bajo licencia CC BY 4.0</p>
 <?php endif; ?>
